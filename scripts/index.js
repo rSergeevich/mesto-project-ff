@@ -1,16 +1,23 @@
-// const cardTemplate = document.querySelector('#card-template').content;
-// const cardContainer = document.querySelector('.places__list');
+// @todo: Темплейт карточки
+const cardContainer = document.querySelector('.places__list');
+const templateElem = document.querySelector('#card-template').content;
 
-// initialCards.forEach(function (item) {
-//   const cardElem = cardTemplate.cloneNode(true);
-//   cardElem.querySelector('card__image').src = item.link;
-//   cardElem.querySelector('card__image').alt = item.name;
-//   cardElem.querySelector('card__title').textContent = item.name;
+initialCards.forEach(function createCard(item) {
+  const cardElem = templateElem.cloneNode(true);
 
-//   cardContainer.append(cardElem);
-// });
+  const deleteCardButton = cardElem.querySelector('.card__delete-button');
 
-// console.log(initialCards);
+  deleteCardButton.addEventListener('click', function () {
+    const cardItem = deleteCardButton.closest('.places__item');
+    cardItem.remove();
+  });
+
+  cardElem.querySelector('.card__image').src = item.link;
+  cardElem.querySelector('.card__image').alt = item.name;
+  cardElem.querySelector('.card__title').textContent = item.name;
+
+  cardContainer.append(cardElem);
+});
 
 const addButton = document.querySelector('.profile__add-button');
 const popupAddNewCard = document.querySelector('.popup_type_new-card');
@@ -23,24 +30,6 @@ addButton.addEventListener('click', function openPopup() {
 closeAddButton.addEventListener('click', function closePopup() {
   popupAddNewCard.classList.remove('popup_is-opened');
 });
-
-const containerList = document.querySelector('.places__list');
-const savePlaceButton = popupAddNewCard.querySelector('.popup__button');
-
-const nameInput = document.querySelector('.popup__input_type_card-name');
-const urlInput = document.querySelector('.popup__input_type_url');
-const templateElem = document.querySelector('#card-template').content;
-const cardElem = templateElem.querySelector('.places__item').cloneNode(true);
-
-savePlaceButton.addEventListener('click', function createCard() {
-  cardElem.querySelector('.card__image').alt = nameInput.value;
-  cardElem.querySelector('.card__image').src = urlInput.textContent;
-  cardElem.querySelector('.card__title').textContent = nameInput.value;
-
-  containerList.append(cardElem);
-});
-
-// @todo: Темплейт карточки
 
 // @todo: DOM узлы
 
