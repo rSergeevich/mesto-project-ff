@@ -32,3 +32,17 @@ function addCard(item) {
 initialCards.forEach(function (item) {
   addCard(createCard(item, deleteCard));
 });
+
+const addButton = document.querySelector('.profile__add-button');
+
+const popupAddNewCard = document.querySelector('.popup_type_new-card');
+
+const closeAddButton = popupAddNewCard.querySelector('.popup__close');
+
+addButton.addEventListener('click', function openPopup() {
+  popupAddNewCard.classList.add('popup_is-opened');
+});
+
+closeAddButton.addEventListener('click', function closePopup() {
+  popupAddNewCard.classList.remove('popup_is-opened');
+});
