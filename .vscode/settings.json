@@ -21,7 +21,6 @@
     "workbench.colorTheme": "freeCodeCamp Dark Theme",
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.tabSizing": "shrink",
-    "workbench.activityBar.visible": true,
     "workbench.editor.splitInGroupLayout": "vertical",
     "workbench.editor.enablePreview": false,
     "workbench.startupEditor": "newUntitledFile",

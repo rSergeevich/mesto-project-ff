@@ -46,3 +46,5 @@ addButton.addEventListener('click', function openPopup() {
 closeAddButton.addEventListener('click', function closePopup() {
   popupAddNewCard.classList.remove('popup_is-opened');
 });
+
+console.log('Hello, World!');
