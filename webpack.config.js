@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: { main: './src/index.js' },
@@ -27,7 +28,26 @@ module.exports = {
       {
         // регулярное выражение, которое ищет все файлы с такими расширениями
         test: /\.(png|svg|jpg|gif|woff(2)?|eot|ttf|otf)$/,
-        type: 'asset/resource'
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name].[hash][ext]'
+        }
+      },
+      // правила для обработки CSS
+      {
+        // применять это правило только к CSS-файлам
+        test: /\.css$/,
+        // при обработке этих файлов нужно использовать
+        // MiniCssExtractPlugin.loader и css-loader
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          }
+        ]
       }
     ]
   },
@@ -35,6 +55,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin()
   ]
 };
