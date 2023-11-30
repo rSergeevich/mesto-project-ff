@@ -19,10 +19,10 @@
         <img src="<%=require('./images/avatar.jpg')%>" alt="логотип профиля" class="profile__image">
         <div class="profile__info">
           <h1 class="profile__title">Жак-Ив Кусто</h1>
-          <button class="profile__edit-button" type="button"></button>
+          <button class="profile__edit-button" type="button" aria-label="Редактировать профиль"></button>
           <p class="profile__description">Исследователь океана</p>
         </div>
-        <button class="profile__add-button" type="button"></button>
+        <button class="profile__add-button" type="button" aria-label="Добавить карточку"></button>
       </section>
       <section class="places page__section">
         <ul class="places__list">
@@ -36,9 +36,9 @@
     </footer>
     <div class="popup popup_type_edit">
       <div class="popup__content">
-        <button type="button" class="popup__close"></button>
+        <button type="button" class="popup__close" aria-label="Закрыть модальное окно"></button>
         <h3 class="popup__title">Редактировать профиль</h3>
-        <form class="popup__form" name="edit-profile">
+        <form class="popup__form" name="edit_profile">
           <input type="text" name="namee" class="popup__input popup__input_type_name" placeholder="Имя" required>
           <input type="text" name="description" class="popup__input popup__input_type_description" placeholder="Занятие"
             required>
@@ -49,9 +49,9 @@
     </div>
     <div class="popup popup_type_new-card">
       <div class="popup__content">
-        <button type="button" class="popup__close"></button>
+        <button type="button" class="popup__close" aria-label="Закрыть модальное окно"></button>
         <h3 class="popup__title">Новое место</h3>
-        <form class="popup__form" name="new-place">
+        <form class="popup__form" name="new_place">
           <input type="text" name="place" class="popup__input popup__input_type_card-name" placeholder="Название"
             required>
           <input type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"
@@ -62,25 +62,24 @@
     </div>
     <div class="popup popup_type_image">
       <div class="popup__content popup__content_content_image">
-        <button type="button" class="popup__close"></button>
+        <button type="button" class="popup__close" aria-label="Закрыть модальное окно"></button>
         <img src="" alt="" class="popup__image">
         <p class="popup__caption"></p>
       </div>
     </div>
   </div>
-  <script src="./scripts/cards.js"></script>
 
   <!--Относится к реализации 4-го спринта-->
   <template id="card-template">
     <!--Про тег темплейт студенты узнают из уроков 4-го спринта-->
     <li class="places__item card">
       <img class="card__image" src="" alt="" />
-      <button type="button" class="card__delete-button"></button>
+      <button type="button" class="card__delete-button" aria-label="Удалить карточку"></button>
       <!--Фоновое, инлайном-->
       <div class="card__description">
         <h2 class="card__title">
         </h2>
-        <button type="button" class="card__like-button"></button>
+        <button type="button" class="card__like-button" aria-label="Поставить лайк"></button>
       </div>
     </li>
   </template>
