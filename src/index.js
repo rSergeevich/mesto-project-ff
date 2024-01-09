@@ -104,3 +104,53 @@ const popupImageX = popupImage.querySelector('.popup__close');
 popupImageX.addEventListener('click', () => {
   closeModal(popupImage);
 });
+// валидация
+
+function showInputError(form, input, errorMessage) {
+  const errorElement = form.querySelector(`.${input.id}__error`);
+  input.classList.add('popup__input_type_error');
+  errorElement.textContent = errorMessage;
+}
+
+function hideInputError(form, input) {
+  const errorElement = form.querySelector(`.${input.id}__error`);
+  input.classList.remove('popup__input_type_error');
+  errorElement.textContent = '';
+}
+
+function checkInputValidaty(form, input) {
+  if (!input.validity.valid) {
+    showInputError(form, input, input.validationMessage);
+  } else {
+    hideInputError(form, input);
+    console.log(form);
+    console.log(input);
+    console.log(input.validationMessage);
+  }
+}
+
+function setEventListeners(form) {
+  const inputList = Array.from(document.querySelectorAll('.popup__input'));
+
+  inputList.forEach(input => {
+    input.addEventListener('input', function () {
+      checkInputValidaty(form, input);
+    });
+  });
+}
+
+function goValidation() {
+  const formList = Array.from(document.querySelectorAll('.popup__form'));
+
+  formList.forEach(form => {
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+    });
+  });
+
+  formList.forEach(form => {
+    setEventListeners(form);
+  });
+}
+
+goValidation();

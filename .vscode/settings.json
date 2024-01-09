@@ -9,7 +9,9 @@
     "editor.wordWrap": "on",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.inlineSuggest.enabled": true,
-    "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
     "files.defaultLanguage": "javascript",
     "files.autoSave": "onWindowChange",
     "files.hotExit": "onExit",
