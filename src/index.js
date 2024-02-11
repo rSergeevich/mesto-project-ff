@@ -1,6 +1,7 @@
 import { initialCards } from './components/cards.js';
 import { deleteCard, createCard, likeCardToggle } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
+import { enableValidation, clearValidation } from './components/validation.js';
 import './pages/index.css';
 
 // ---Темплейт карточки---
@@ -16,6 +17,17 @@ function addCard(item) {
 initialCards.forEach(function (item) {
   addCard(createCard(item, deleteCard, openImg, likeCardToggle));
 });
+
+// ---Конфиг---
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 // ---Функция добавления новой карточки на страницу---
 
@@ -80,9 +92,38 @@ const popupAdd = document.querySelector('.popup_type_new-card');
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupAddX = popupAdd.querySelector('.popup__close');
 const popupEditX = popupEdit.querySelector('.popup__close');
+const avatarImage = document.querySelector('.profile__image');
+const popupAvatar = document.querySelector('.popup_type_avatar');
+const popupAvatarX = popupAvatar.querySelector('.popup__close');
+
+avatarImage.addEventListener('click', () => {
+  openModal(popupAvatar);
+
+  clearValidation(
+    popupAvatar.querySelector(validationConfig.formSelector),
+    validationConfig.inputSelector,
+    validationConfig.submitButtonSelector,
+    validationConfig.inactiveButtonClass,
+    validationConfig.inputErrorClass,
+    validationConfig.errorClass
+  );
+});
+
+popupAvatarX.addEventListener('click', () => {
+  closeModal(popupAvatar);
+});
 
 addButton.addEventListener('click', () => {
   openModal(popupAdd);
+
+  clearValidation(
+    popupAdd.querySelector(validationConfig.formSelector),
+    validationConfig.inputSelector,
+    validationConfig.submitButtonSelector,
+    validationConfig.inactiveButtonClass,
+    validationConfig.inputErrorClass,
+    validationConfig.errorClass
+  );
 });
 
 popupAddX.addEventListener('click', () => {
@@ -94,6 +135,15 @@ editButton.addEventListener('click', () => {
 
   nameeInput.value = nameProfileElement.textContent;
   jobInput.value = jobProfileElement.textContent;
+
+  clearValidation(
+    popupEdit.querySelector(validationConfig.formSelector),
+    validationConfig.inputSelector,
+    validationConfig.submitButtonSelector,
+    validationConfig.inactiveButtonClass,
+    validationConfig.inputErrorClass,
+    validationConfig.errorClass
+  );
 });
 
 popupEditX.addEventListener('click', () => {
@@ -104,113 +154,6 @@ const popupImageX = popupImage.querySelector('.popup__close');
 popupImageX.addEventListener('click', () => {
   closeModal(popupImage);
 });
-// валидация
-
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-};
-
-function hasInvalidInput(inputList) {
-  return inputList.some(inputElement => {
-    return !inputElement.validity.valid;
-  });
-}
-
-function showInputError(formElement, inputElement, errorMessage, inputErrorClass, errorClass) {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  errorElement.classList.add(errorClass);
-  errorElement.textContent = errorMessage;
-  inputElement.classList.add(inputErrorClass);
-}
-
-function hideInputError(formElement, inputElement, inputErrorClass, errorClass) {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  errorElement.classList.remove(errorClass);
-  errorElement.textContent = '';
-  inputElement.classList.remove(inputErrorClass);
-}
-
-function checkInputValidity(formElement, inputElement, inputErrorClass, errorClass, errorMessage) {
-  if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  } else {
-    inputElement.setCustomValidity('');
-  }
-
-  if (!inputElement.validity.valid) {
-    showInputError(
-      formElement,
-      inputElement,
-      inputElement.validationMessage,
-      inputErrorClass,
-      errorClass
-    );
-  } else {
-    hideInputError(formElement, inputElement, inputErrorClass, errorClass);
-  }
-}
-
-function toggleButtonState(inputList, submitButtonElement, inactiveButtonClass) {
-  if (hasInvalidInput(inputList)) {
-    submitButtonElement.disabled = true;
-    submitButtonElement.classList.add(inactiveButtonClass);
-  } else {
-    submitButtonElement.disabled = false;
-    submitButtonElement.classList.remove(inactiveButtonClass);
-  }
-}
-
-function setEventListeners(
-  formElement,
-  inputSelector,
-  submitButtonSelector,
-  inactiveButtonClass,
-  inputErrorClass,
-  errorClass
-) {
-  const inputList = Array.from(document.querySelectorAll(inputSelector));
-  const submitButtonElement = document.querySelector(submitButtonSelector);
-
-  toggleButtonState(inputList, submitButtonElement, inactiveButtonClass);
-
-  inputList.forEach(inputElement => {
-    inputElement.addEventListener('input', function () {
-      checkInputValidity(formSelector, inputElement, inputErrorClass, errorClass);
-      toggleButtonState(inputList, submitButtonElement, inactiveButtonClass);
-    });
-  });
-}
-
-function enableValidation(
-  formElement,
-  inputSelector,
-  submitButtonSelector,
-  inactiveButtonClass,
-  inputErrorClass,
-  errorClass
-) {
-  const formList = Array.from(document.querySelectorAll(formElement));
-
-  formList.forEach(form => {
-    form.addEventListener('submit', evt => {
-      evt.preventDefault();
-    });
-  });
-
-  setEventListeners(
-    formElement,
-    inputSelector,
-    submitButtonSelector,
-    inactiveButtonClass,
-    inputErrorClass,
-    errorClass
-  );
-}
 
 enableValidation(
   validationConfig.formSelector,
@@ -220,5 +163,3 @@ enableValidation(
   validationConfig.inputErrorClass,
   validationConfig.errorClass
 );
-
-addButton.classList.add(validationConfig.inactiveButtonClass);

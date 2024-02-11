@@ -16,7 +16,11 @@
     </header>
     <main class="content">
       <section class="profile page__section">
-        <img src="<%=require('./images/avatar.jpg')%>" alt="логотип профиля" class="profile__image">
+        <!-- <img src="<%=require('./images/avatar.jpg')%>" alt="логотип профиля" class="profile__image"> -->
+        <div class="profile__image" style="background-image: url(<%=require('./images/avatar.jpg')%>);">
+          <img class="profile__edit-image" src="<%=require('./images/vector.svg')%>" alt="логотип профиля">
+          <div class="profile__image-overlay"></div>
+        </div>
         <div class="profile__info">
           <h1 class="profile__title">Жак-Ив Кусто</h1>
           <button class="profile__edit-button" type="button" aria-label="Редактировать профиль"></button>
@@ -34,6 +38,19 @@
         © 2023 Роман Доронкин
       </p>
     </footer>
+    <div class="popup popup_type_avatar">
+      <div class="popup__content popup__content_type_avatar">
+        <button type="button" class="popup__close" aria-label="Закрыть модальное окно"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="edit_avatar" novalidate>
+          <input type="url" name="avatar-link" class="popup__input popup__input_type_url" id="avatar-input"
+            placeholder="Ссылка на картинку" required>
+          <span class="avatar-input-error popup__input_type_error"></span>
+          <button type="submit" class="button popup__button popup__button_type_avatar popup__button_disabled"
+            disabled>Сохранить</button>
+        </form>
+      </div>
+    </div>
     <div class="popup popup_type_edit">
       <div class="popup__content">
         <button type="button" class="popup__close" aria-label="Закрыть модальное окно"></button>
@@ -49,7 +66,7 @@
             data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
           <span class="description-input-error popup__input_type_error"></span>
           <!--Можно добавить required, они про него знают-->
-          <button type="submit" class="button popup_button">Сохранить</button>
+          <button type="submit" class="button popup__button">Сохранить</button>
         </form>
       </div>
     </div>
