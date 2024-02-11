@@ -69,14 +69,21 @@ const nameeInput = formElementEdit.namee;
 const jobInput = formElementEdit.description;
 const nameProfileElement = document.querySelector('.profile__title');
 const jobProfileElement = document.querySelector('.profile__description');
+const imageProfileElement = document.querySelector('.profile__image');
 
 function handleFormSubmitEdit(evt) {
   evt.preventDefault();
 
-  nameProfileElement.textContent = nameeInput.value;
-  jobProfileElement.textContent = jobInput.value;
+  patchProfile({ name: nameeInput.value, about: jobInput.value })
+    .then(data => {
+      nameProfileElement.textContent = data.name;
+      jobProfileElement.textContent = data.about;
+      closeModal(popupEdit);
+    })
+    .catch(error => console.log(error));
 
-  closeModal(popupEdit);
+  // nameProfileElement.textContent = nameeInput.value;
+  // jobProfileElement.textContent = jobInput.value;
 
   formElementEdit.reset();
 }
@@ -163,3 +170,82 @@ enableValidation(
   validationConfig.inputErrorClass,
   validationConfig.errorClass
 );
+
+const apiConfig = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-6',
+  headers: {
+    authorization: '3dc1da83-ee0d-4bed-9320-1010944bf165',
+    'Content-Type': 'application/json'
+  }
+};
+
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  }
+
+  return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
+}
+
+function getUserData() {
+  return fetch(`${apiConfig.baseUrl}/users/me`, {
+    method: 'GET',
+    headers: apiConfig.headers
+  }).then(res => checkResponse(res));
+}
+
+function getCards() {
+  return fetch(`${apiConfig.baseUrl}/cards`, {
+    method: 'GET',
+    headers: apiConfig.headers
+  }).then(res => checkResponse(res));
+}
+
+function patchProfile(data) {
+  return fetch(`${apiConfig.baseUrl}/users/me`, {
+    method: 'PATCH',
+    headers: apiConfig.headers,
+    body: JSON.stringify(data)
+  }).then(res => checkResponse(res));
+}
+
+function postNewCard(data) {
+  return fetch(`${apiConfig.baseUrl}/cards`, {
+    method: 'POST',
+    headers: apiConfig.headers,
+    body: JSON.stringify(data)
+  }).then(res => checkResponse(res));
+}
+
+function cerdDelete(cardId) {
+  return fetch(`${apiConfig.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: apiConfig.headers
+  }).then(res => checkResponse(res));
+}
+
+function likeCard(Id, method) {
+  return fetch(`${apiConfig.baseUrl}/cards/likes/${Id}`, {
+    method: method,
+    headers: apiConfig.headers
+  }).then(res => findError(res));
+}
+
+function patchAvatar(url) {
+  return fetch(`${apiConfig.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: apiConfig.headers,
+    body: JSON.stringify(url)
+  }).then(res => checkResponse(res));
+}
+
+Promise.all([getUserData(), getCards()]).then(([data, cardArray]) => {
+  nameProfileElement.textContent = data.name;
+  jobProfileElement.textContent = data.about;
+  imageProfileElement.style.backgroundImage = `url("${data.avatar}")`;
+
+  cardArray.forEach(item => {
+    const card = createCard(item, deleteCard, openImg, likeCardToggle);
+    addCard(card);
+  });
+});
