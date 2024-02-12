@@ -1,22 +1,20 @@
 import { initialCards } from './components/cards.js';
-import { deleteCard, createCard, likeCardToggle } from './components/card.js';
+import { removeCard, createCard, likeCardToggle } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
+import {
+  getCards,
+  getUserData,
+  patchProfile,
+  postNewCard,
+  cardDelete,
+  likeCard,
+  patchAvatar
+} from './components/api.js';
 import './pages/index.css';
 
 // ---Темплейт карточки---
 const cardContainer = document.querySelector('.places__list');
-
-// ---функция вставки карточек---
-
-function addCard(item) {
-  cardContainer.append(item);
-}
-// ---Вывод на карточек из массива на страницу---
-
-initialCards.forEach(function (item) {
-  addCard(createCard(item, deleteCard, openImg, likeCardToggle));
-});
 
 // ---Конфиг---
 
@@ -32,6 +30,7 @@ const validationConfig = {
 // ---Функция добавления новой карточки на страницу---
 
 const formElementAdd = document.forms.new_place;
+const addSubmit = formElementAdd.querySelector('.popup__button');
 const titleInput = formElementAdd.place;
 const srcInput = formElementAdd.link;
 
@@ -49,22 +48,36 @@ function openImg(evt) {
   openModal(popupImage);
 }
 
+// функция добавления новой карточки
+
 formElementAdd.addEventListener('submit', function (evt) {
   evt.preventDefault();
-  const newCardData = {
-    name: titleInput.value,
-    link: srcInput.value
-  };
 
-  cardContainer.prepend(createCard(newCardData, deleteCard, openImg, likeCardToggle));
+  const classicText = 'Сохранить';
+  loadingProcess(addSubmit, 'Сохранение...');
 
-  closeModal(popupAdd);
+  postNewCard({ name: titleInput.value, link: srcInput.value })
+    .then(cardData => {
+      const card = createCard(cardData, removeCard, cardData.owner, openImg, likeCardToggle);
+      cardContainer.prepend(card);
+      closeModal(popupAdd);
+      titleInput.value = '';
+      srcInput.value = '';
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    .finally(res => {
+      loadingProcess(addSubmit, classicText);
+    });
+
   formElementAdd.reset();
 });
 
 // ---Функция Редактирования профиля---
 
 const formElementEdit = document.edit_profile;
+const editSubmit = formElementEdit.querySelector('.popup__button');
 const nameeInput = formElementEdit.namee;
 const jobInput = formElementEdit.description;
 const nameProfileElement = document.querySelector('.profile__title');
@@ -74,13 +87,19 @@ const imageProfileElement = document.querySelector('.profile__image');
 function handleFormSubmitEdit(evt) {
   evt.preventDefault();
 
+  const classicText = 'Сохранить';
+  loadingProcess(editSubmit, 'Сохранение...');
+
   patchProfile({ name: nameeInput.value, about: jobInput.value })
     .then(data => {
       nameProfileElement.textContent = data.name;
       jobProfileElement.textContent = data.about;
       closeModal(popupEdit);
     })
-    .catch(error => console.log(error));
+    .catch(error => console.log(error))
+    .finally(res => {
+      loadingProcess(editSubmit, classicText);
+    });
 
   // nameProfileElement.textContent = nameeInput.value;
   // jobProfileElement.textContent = jobInput.value;
@@ -101,6 +120,8 @@ const popupAddX = popupAdd.querySelector('.popup__close');
 const popupEditX = popupEdit.querySelector('.popup__close');
 const avatarImage = document.querySelector('.profile__image');
 const popupAvatar = document.querySelector('.popup_type_avatar');
+const avatarSubmit = popupAvatar.querySelector('.popup__button_type_avatar');
+const avatarInput = popupAvatar.querySelector('.popup__input_type_url');
 const popupAvatarX = popupAvatar.querySelector('.popup__close');
 
 avatarImage.addEventListener('click', () => {
@@ -171,73 +192,31 @@ enableValidation(
   validationConfig.errorClass
 );
 
-const apiConfig = {
-  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-6',
-  headers: {
-    authorization: '3dc1da83-ee0d-4bed-9320-1010944bf165',
-    'Content-Type': 'application/json'
-  }
-};
+function AvatarEdit(evt) {
+  evt.preventDefault();
 
-function checkResponse(res) {
-  if (res.ok) {
-    return res.json();
-  }
+  const classicText = 'Сохранить';
+  loadingProcess(avatarSubmit, 'Сохранение...');
 
-  return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
+  patchAvatar({ avatar: avatarInput.value })
+    .then(data => {
+      avatarImage.style.backgroundImage = `url('${data.avatar}')`;
+      avatarInput.value = '';
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    .finally(res => {
+      loadingProcess(avatarSubmit, classicText);
+    });
+  closeModal(popupAvatar);
 }
 
-function getUserData() {
-  return fetch(`${apiConfig.baseUrl}/users/me`, {
-    method: 'GET',
-    headers: apiConfig.headers
-  }).then(res => checkResponse(res));
+function loadingProcess(button, textStr) {
+  button.textContent = textStr;
 }
 
-function getCards() {
-  return fetch(`${apiConfig.baseUrl}/cards`, {
-    method: 'GET',
-    headers: apiConfig.headers
-  }).then(res => checkResponse(res));
-}
-
-function patchProfile(data) {
-  return fetch(`${apiConfig.baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: apiConfig.headers,
-    body: JSON.stringify(data)
-  }).then(res => checkResponse(res));
-}
-
-function postNewCard(data) {
-  return fetch(`${apiConfig.baseUrl}/cards`, {
-    method: 'POST',
-    headers: apiConfig.headers,
-    body: JSON.stringify(data)
-  }).then(res => checkResponse(res));
-}
-
-function cerdDelete(cardId) {
-  return fetch(`${apiConfig.baseUrl}/cards/${cardId}`, {
-    method: 'DELETE',
-    headers: apiConfig.headers
-  }).then(res => checkResponse(res));
-}
-
-function likeCard(Id, method) {
-  return fetch(`${apiConfig.baseUrl}/cards/likes/${Id}`, {
-    method: method,
-    headers: apiConfig.headers
-  }).then(res => findError(res));
-}
-
-function patchAvatar(url) {
-  return fetch(`${apiConfig.baseUrl}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: apiConfig.headers,
-    body: JSON.stringify(url)
-  }).then(res => checkResponse(res));
-}
+avatarSubmit.addEventListener('click', AvatarEdit);
 
 Promise.all([getUserData(), getCards()]).then(([data, cardArray]) => {
   nameProfileElement.textContent = data.name;
@@ -245,7 +224,7 @@ Promise.all([getUserData(), getCards()]).then(([data, cardArray]) => {
   imageProfileElement.style.backgroundImage = `url("${data.avatar}")`;
 
   cardArray.forEach(item => {
-    const card = createCard(item, deleteCard, openImg, likeCardToggle);
-    addCard(card);
+    const card = createCard(item, removeCard, data, openImg, likeCardToggle);
+    cardContainer.append(card);
   });
 });
