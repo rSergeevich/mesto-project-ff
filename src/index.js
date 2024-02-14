@@ -1,16 +1,7 @@
-import { initialCards } from './components/cards.js';
 import { removeCard, createCard, likeCardToggle } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import {
-  getCards,
-  getUserData,
-  patchProfile,
-  postNewCard,
-  cardDelete,
-  likeCard,
-  patchAvatar
-} from './components/api.js';
+import { getCards, getUserData, patchProfile, postNewCard, patchAvatar } from './components/api.js';
 import './pages/index.css';
 
 // ---Темплейт карточки---
@@ -61,8 +52,7 @@ formElementAdd.addEventListener('submit', function (evt) {
       const card = createCard(cardData, removeCard, cardData.owner, openImg, likeCardToggle);
       cardContainer.prepend(card);
       closeModal(popupAdd);
-      titleInput.value = '';
-      srcInput.value = '';
+      formElementAdd.reset();
     })
     .catch(err => {
       console.log(err);
@@ -70,8 +60,6 @@ formElementAdd.addEventListener('submit', function (evt) {
     .finally(res => {
       loadingProcess(addSubmit, classicText);
     });
-
-  formElementAdd.reset();
 });
 
 // ---Функция Редактирования профиля---
@@ -95,16 +83,12 @@ function handleFormSubmitEdit(evt) {
       nameProfileElement.textContent = data.name;
       jobProfileElement.textContent = data.about;
       closeModal(popupEdit);
+      formElementEdit.reset();
     })
     .catch(error => console.log(error))
     .finally(res => {
       loadingProcess(editSubmit, classicText);
     });
-
-  // nameProfileElement.textContent = nameeInput.value;
-  // jobProfileElement.textContent = jobInput.value;
-
-  formElementEdit.reset();
 }
 
 formElementEdit.addEventListener('submit', handleFormSubmitEdit);
@@ -192,7 +176,7 @@ enableValidation(
   validationConfig.errorClass
 );
 
-function AvatarEdit(evt) {
+function avatarEdit(evt) {
   evt.preventDefault();
 
   const classicText = 'Сохранить';
@@ -216,7 +200,7 @@ function loadingProcess(button, textStr) {
   button.textContent = textStr;
 }
 
-avatarSubmit.addEventListener('click', AvatarEdit);
+avatarSubmit.addEventListener('click', avatarEdit);
 
 Promise.all([getUserData(), getCards()]).then(([data, cardArray]) => {
   nameProfileElement.textContent = data.name;

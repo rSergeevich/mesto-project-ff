@@ -48,9 +48,7 @@ function cardDelete(cardId) {
   return fetch(`${apiConfig.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: apiConfig.headers
-  })
-    .then(res => checkResponse(res))
-    .catch(err => console.log(err));
+  }).then(res => checkResponse(res));
 }
 
 function likeCard(Id, method) {

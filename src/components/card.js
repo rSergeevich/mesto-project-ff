@@ -4,7 +4,7 @@ import { cardDelete, likeCard } from './api';
 const templateElem = document.querySelector('#card-template').content;
 
 // ---Функция создания карточки---
-function createCard(cardData, removeCard, data, openImg, likeCardToggle) {
+function createCard(cardData, removeCard, userData, openImg, likeCardToggle) {
   const cardElem = templateElem.querySelector('.places__item').cloneNode(true);
 
   const cardImage = cardElem.querySelector('.card__image');
@@ -13,11 +13,11 @@ function createCard(cardData, removeCard, data, openImg, likeCardToggle) {
   const likeBtn = cardElem.querySelector('.card__like-button');
   const counter = cardElem.querySelector('.card__like-counter');
 
-  if (cardData.owner._id !== data._id) {
+  if (cardData.owner._id !== userData._id) {
     cardElem.removeChild(deleteCardButton);
   }
 
-  if (cardData.likes.find(({ _id }) => _id === data._id)) {
+  if (cardData.likes.find(({ _id }) => _id === userData._id)) {
     likeBtn.classList.add('card__like-button_is-active');
   }
 
